@@ -5,12 +5,23 @@ session_start();
 // Set timezone to match your local timezone
 date_default_timezone_set('Asia/Beirut');
 
-require __DIR__ . '/PHPMailer/src/Exception.php';
-require __DIR__ . '/PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/PHPMailer/src/SMTP.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->Load();
+
+$mailUsername = $_ENV['MAIL_USERNAME'];
+$mailPassword = $_ENV['MAIL_PASSWORD'];
+$mailHost = $_ENV['MAIL_HOST'];
+$mailPort = $_ENV['MAIL_PORT'];
+$mailEncryption = $_ENV['MAIL_ENCRYPTION'];
+$mailFromAddress = $_ENV['MAIL_FROM_ADDRESS'];
+$mailFromName = $_ENV['MAIL_FROM_NAME'];
+
+
 
 $error = '';
 $success = '';
@@ -41,16 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = $mailHost;
             $mail->SMTPAuth = true;
-            $mail->Username = 'abbasjaber9090@gmail.com';
-            $mail->Password = 'ixcw encg tldy qgdp';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->Username = $mailUsername;
+            $mail->Password = $mailPassword;
+            $mail->SMTPSecure = $mailEncryption;
+            $mail->Port = $mailPort;
 
             $mail->setFrom(
-                'abbasjaber9090@gmail.com', 
-                'Demure Pour Tou'
+                $mailFromAddress, 
+                $mailFromName
             );
             $mail->addAddress($user['email'], $user['UserName']);
 
